@@ -1,7 +1,11 @@
-# FairnessNLP
+# Team FairnessNLP: Bias Mitigation and Evaluation of Sentiment Analysis Models
 
-## Usage
+This repository contains the code and selected data for our NLP Capstone project, which focuses on mitigating and measuring bias in sentiment analysis models. We fine tune the [BERT for Sequence Classification model from HuggingFace](https://huggingface.co/transformers/model_doc/bert.html#bertforsequenceclassification) on a [Twitter sentiment dataset](https://www.aclweb.org/anthology/S17-2088/). The Twitter dataset is from SemEval 2017 and consists of tweets from 2013 to 2017, each labeled as positive or negative. We created the `twitter_preprocess.py` script to pre-process this Twitter dataset. To fine-tune BERT, both with and without bias mitigation techniques applied, we used `run_classifier.py`, from [Liang et al. (2020)](https://www.aclweb.org/anthology/2020.acl-main.488/)'s [GitHub repository](https://github.com/pliang279/sent_debias), following the instructions in their repository’s README.
 
-### SentDebias
+## Bias Mitigation
 
-We used the SentDebias code found on the [GitHub](https://github.com/pliang279/sent_debias) for [Liang et al. (2020)](https://www.aclweb.org/anthology/2020.acl-main.488.pdf). To use the Twitter dataset, we created a custom `TwitterProcessor` class for processing our data. Using `run_classifier.py`, we fine-tuned a biased and debiased version of BERT on the Twitter dataset according to the README on their repository.
+We apply 4 bias mitigation techniques, both individually and combined. To mitigate bias in the dataset, we implement counterfactual data augmentation and AFLite, which can be run using `Counterfactual_Data_Augmentation.ipynb` and `aflite.py`, respectively. The gendered word lists utilized by counterfactual data augmentation are in `data/female_word_file.txt` and `data/male_word_file.txt`. To mitigate bias while the model is training, we apply Sent-Debias, using the code from [Liang et al. (2020)](https://www.aclweb.org/anthology/2020.acl-main.488/)'s [GitHub repository](https://github.com/pliang279/sent_debias). Last, we implement certified mitigation, located in `Bias_Evaluation.ipynb`, to mitigate bias in the model’s predictions. Before running certified mitigation, run the `is-person.py` and `is-gendered-noun.py` scripts, which create two files (`human_words.txt` and `gendered_words.txt`), containing all person-related nouns and all words that are one hop away from a gendered noun, to reduce the runtime of certified mitigation. No mutations are performed on words that are one hop away from a gendered noun to prevent phrases such as "male actress".
+
+## Bias Evaluation
+
+Code for all bias evaluation techniques we implemented is in `Bias_Evaluation.ipynb`. Before running metamorphic testing, run the `is-person.py` and `is-gendered-noun.py` scripts, as with certified mitigation. The lists of gendered words, gender-neutral occupations, and Equity Evaluation Corpus, which are needed for the bias evaluation techniques, are located in the data folder.
